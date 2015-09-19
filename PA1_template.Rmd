@@ -10,8 +10,7 @@ output:
 
 Cloned GitHub repository <http://github.com/rdpeng/RepData_PeerAssessment1>  
 ```{r}
-setwd("~/Box Sync/Programming/Coursera - Data Science/5.0 Reproducible Research/RepData_PeerAssessment1")  #mac
-#setwd("C:/Users/steven.aurousseau/Box Sync/Programming/Coursera - Data Science/5.0 Reproducible Research/RepData_PeerAssessment1")
+setwd("~/Box Sync/Programming/Coursera - Data Science/5.0 Reproducible Research/RepData_PeerAssessment1") 
 unzip("activity.zip")
 list.files()
 ```
@@ -19,26 +18,25 @@ list.files()
 Load data, check dataframe size and class and look at top rows.
 ```{r}
 data <- read.csv("activity.csv")
-dim(data)
 head(data)
 str(data)
 ```
 
 ## What is mean total number of steps taken per day?
 
-1. Calculate the total number of steps taken per day
+  1. Calculate the total number of steps taken per day
 ```{r}
 total <- aggregate(steps ~ date, data = data, sum, na.rm = TRUE)
 head(total)
 ```
 
-2. Make a histogram of the total number of steps taken each day
+  2. Make a histogram of the total number of steps taken each day
 ```{r}
 library(ggplot2)
 qplot(total$steps, geom="histogram", binwidth=1000, xlab="total steps per day")
 ```
 
-3. Calculate and report the mean and median of the total number of steps taken per day
+  3. Calculate and report the mean and median of the total number of steps taken per day
 ```{r}
 mean(total$steps, na.rm=TRUE)
 median(total$steps, na.rm=TRUE)
@@ -46,30 +44,30 @@ median(total$steps, na.rm=TRUE)
 
 ## What is the average daily activity pattern?
 
-1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+  1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 ```{r}
 avg.steps <- aggregate(steps ~ interval, data = data, mean, na.rm = TRUE)
 with(avg.steps, qplot(interval, steps, geom="line", ylab="avg steps", xlab="5min interval"))
 ```
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+  2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ```{r}
 avg.steps[which.max(avg.steps$steps), ]
 ```
 
 ## Imputing missing values
 
-1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+  1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
 ```{r}
 sum(is.na(data))
 ```
 
-2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+  2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
     Will fill missing values with the mean (for all 61days) for the corresponding 5 minute interval.
 
-3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+  3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 ```{r version 1}
 data.fill <- data
@@ -96,14 +94,11 @@ mean(total.fill$steps)
 median(total.fill$steps)
 ```
 
-The mean is unchanged from the unfilled data set, while the median is now higher and equal to the mean. This is a result of forcing the missing values to to the mean of the 5min periods. The impact of imputing the values of the total number of steps was to force the data to look more like the strategy that was applied. In this case the strategy for filling the data was the mean for the period, consequently the filled data is biased towards that mean.   
-
+The mean is unchanged from the unfilled data set, while the median is now higher and equal to the mean. This is a result of forcing the missing values to be equal to the mean of the 5min periods. The impact of imputing the values of the total number of steps was to force the data to look more like the strategy that was applied. In this case the strategy for filling the data was the mean for the period, consequently the filled data is biased towards that mean.   
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part
-
-1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+  1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
 ```{r}
 weekend <- c("Saturday", "Sunday")
@@ -111,7 +106,7 @@ data.fill$weekend <- factor(weekdays(as.POSIXct(data.fill$date)) %in% weekend,
                      levels=c(TRUE, FALSE), labels=c("weekend", "weekday"))
 ```
 
-2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+  2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
 ```{r}
 total.weekend <- aggregate(steps ~ interval + weekend, data = data.fill, sum)
@@ -119,7 +114,7 @@ qplot(interval, steps, data = total.weekend, facets = weekend ~., geom = "line",
       ylab="avg steps", xlab="5min interval")
 ```
 
-
+In general there are more steps taken during the day on weekdays, especially in the morning.
 
 
 

@@ -6,38 +6,21 @@
 Cloned GitHub repository <http://github.com/rdpeng/RepData_PeerAssessment1>  
 
 ```r
-setwd("~/Box Sync/Programming/Coursera - Data Science/5.0 Reproducible Research/RepData_PeerAssessment1")  #mac
-#setwd("C:/Users/steven.aurousseau/Box Sync/Programming/Coursera - Data Science/5.0 Reproducible Research/RepData_PeerAssessment1")
+setwd("~/Box Sync/Programming/Coursera - Data Science/5.0 Reproducible Research/RepData_PeerAssessment1") 
 unzip("activity.zip")
 list.files()
 ```
 
 ```
-##  [1] "activity.csv"                                  
-##  [2] "activity.zip"                                  
-##  [3] "doc"                                           
-##  [4] "instructions_fig"                              
-##  [5] "PA1_template (steven.aurousseau@gmail.com).Rmd"
-##  [6] "PA1_template_2015-09-16.Rmd"                   
-##  [7] "PA1_template_files"                            
-##  [8] "PA1_template.html"                             
-##  [9] "PA1_template.md"                               
-## [10] "PA1_template.Rmd"                              
-## [11] "README.md"
+## [1] "activity.csv"       "activity.zip"       "doc"               
+## [4] "instructions_fig"   "PA1_template_files" "PA1_template.html" 
+## [7] "PA1_template.md"    "PA1_template.Rmd"   "README.md"
 ```
 
 Load data, check dataframe size and class and look at top rows.
 
 ```r
 data <- read.csv("activity.csv")
-dim(data)
-```
-
-```
-## [1] 17568     3
-```
-
-```r
 head(data)
 ```
 
@@ -64,7 +47,7 @@ str(data)
 
 ## What is mean total number of steps taken per day?
 
-1. Calculate the total number of steps taken per day
+  1. Calculate the total number of steps taken per day
 
 ```r
 total <- aggregate(steps ~ date, data = data, sum, na.rm = TRUE)
@@ -81,7 +64,7 @@ head(total)
 ## 6 2012-10-07 11015
 ```
 
-2. Make a histogram of the total number of steps taken each day
+  2. Make a histogram of the total number of steps taken each day
 
 ```r
 library(ggplot2)
@@ -90,7 +73,7 @@ qplot(total$steps, geom="histogram", binwidth=1000, xlab="total steps per day")
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
 
-3. Calculate and report the mean and median of the total number of steps taken per day
+  3. Calculate and report the mean and median of the total number of steps taken per day
 
 ```r
 mean(total$steps, na.rm=TRUE)
@@ -110,7 +93,7 @@ median(total$steps, na.rm=TRUE)
 
 ## What is the average daily activity pattern?
 
-1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+  1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```r
 avg.steps <- aggregate(steps ~ interval, data = data, mean, na.rm = TRUE)
@@ -119,7 +102,7 @@ with(avg.steps, qplot(interval, steps, geom="line", ylab="avg steps", xlab="5min
 
 ![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+  2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```r
 avg.steps[which.max(avg.steps$steps), ]
@@ -132,7 +115,7 @@ avg.steps[which.max(avg.steps$steps), ]
 
 ## Imputing missing values
 
-1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+  1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
 
 ```r
@@ -143,11 +126,11 @@ sum(is.na(data))
 ## [1] 2304
 ```
 
-2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+  2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
     Will fill missing values with the mean (for all 61days) for the corresponding 5 minute interval.
 
-3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+  3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 
 ```r
@@ -191,14 +174,11 @@ median(total.fill$steps)
 ## [1] 10766.19
 ```
 
-The mean is unchanged from the unfilled data set, while the median is now higher and equal to the mean. This is a result of forcing the missing values to to the mean of the 5min periods. The impact of imputing the values of the total number of steps was to force the data to look more like the strategy that was applied. In this case the strategy for filling the data was the mean for the period, consequently the filled data is biased towards that mean.   
-
+The mean is unchanged from the unfilled data set, while the median is now higher and equal to the mean. This is a result of forcing the missing values to be equal to the mean of the 5min periods. The impact of imputing the values of the total number of steps was to force the data to look more like the strategy that was applied. In this case the strategy for filling the data was the mean for the period, consequently the filled data is biased towards that mean.   
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part
-
-1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+  1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
 
 ```r
@@ -207,7 +187,7 @@ data.fill$weekend <- factor(weekdays(as.POSIXct(data.fill$date)) %in% weekend,
                      levels=c(TRUE, FALSE), labels=c("weekend", "weekday"))
 ```
 
-2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+  2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
 
 ```r
@@ -218,7 +198,7 @@ qplot(interval, steps, data = total.weekend, facets = weekend ~., geom = "line",
 
 ![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
 
-
+In general there are more steps taken during the day on weekdays, especially in the morning.
 
 
 
